@@ -197,8 +197,7 @@ class Server
         try {
             return $result( $this->host->{$request['method']}($params) );
         }catch(Exception\ProcedureException $e) {
-            if($e instanceof Exception\InvalidParamsException) return $error(-32602, ($e->getMessage() != "") ? $e->getMessage() : 'Invalid parameters');
-            return $error(-32603, ($e->getMessage() != "") ? $e->getMessage() : 'Internal error invoking method');
+            return $error($e->getCode(), $e->getMessage(), $e->getData());
         }
     }
     
