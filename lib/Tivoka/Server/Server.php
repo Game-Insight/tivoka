@@ -370,7 +370,7 @@ class Server
      */
     public static function interpretBatch(array $assoc)
     {
-        if(count($assoc) <= 1)
+        if(isset($assoc['jsonrpc']))
         return FALSE;
     
         foreach($assoc as $req)
