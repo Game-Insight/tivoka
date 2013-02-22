@@ -66,7 +66,7 @@ class MethodWrapper
     public function exist($method)
     {
         if(!is_array($this->methods))return FALSE;
-        if(is_callable($this->methods[$method]))return TRUE;
+        if(isset($this->methods[$method]) && is_callable($this->methods[$method]))return TRUE;
     }
 
     /**
