@@ -109,12 +109,12 @@ class Server
     /**
      * Starts processing of the HTTP input. This will stop further execution of the script.
      */
-    public function dispatch() {
+    public function dispatch($requestBody) {
         // disable error reporting?
         if($this->hide_errors) error_reporting(0);// prevents messing up the response
-        
-        $this->input = file_get_contents('php://input');
-        
+
+	    $this->input = $requestBody;
+
         $json_errors = array(
             JSON_ERROR_NONE => '',
             JSON_ERROR_DEPTH => 'The maximum stack depth has been exceeded',
@@ -155,7 +155,7 @@ class Server
         $this->process($this->input);
         $this->respond();
     }
-    
+
     /**
      * Processes the passed request
      * @param array $request the parsed request
@@ -188,7 +188,7 @@ class Server
         }
         
         //search method...
-        if(!is_callable(array($this->host, $request['method'])))
+        if(!$this->host->exist($request['method']))
         {
             return $error(-32601, 'Method not found', $request['method']);
         }
@@ -282,10 +282,10 @@ class Server
         $count = count($this->response);
         
         if($count == 1)//single request
-            die(json_encode($this->response[0]));
+            echo(json_encode($this->response[0]));
     
         if($count > 1)//batch request
-            die(json_encode($this->response));
+            echo(json_encode($this->response));
     
         if($count < 1)//no response
             exit;
