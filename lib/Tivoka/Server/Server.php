@@ -149,6 +149,8 @@ class Server
                 $this->process($request);
             }
             $this->respond();
+
+	        return;
         }
         
         //process request
