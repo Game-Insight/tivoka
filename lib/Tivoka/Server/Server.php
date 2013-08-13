@@ -131,14 +131,18 @@ class Server
         {
             $this->returnError(null,-32600);
             $this->respond();
+
+	        return;
         }
-        
+
         // decode request...
         $this->input = json_decode($this->input,true);
         if($this->input === NULL)
         {
             $this->returnError(null,-32700, 'JSON parse error: '.$json_errors[json_last_error()] );
             $this->respond();
+
+	        return;
         }
         
         // batch?
