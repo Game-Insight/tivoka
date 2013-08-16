@@ -37,12 +37,14 @@ namespace Tivoka;
  */
 abstract class Client
 {
-    
-    /**
-     * Initializes a Connection to a remote server
-     * @param mixed $target Remote end-point definition
-     * @return Tivoka\Client\Connection\ConnectionInterface
-     */
+
+	/**
+	 * Initializes a Connection to a remote server
+	 *
+	 * @param mixed $target the URL of the target server
+	 *
+	 * @return \Tivoka\Client\Connection\ConnectionInterface
+	 */
     public static function connect($target) {
         return Client\Connection\AbstractConnection::factory($target);
     }
@@ -51,7 +53,7 @@ abstract class Client
      * Creates a request
      * @param string $method The method to invoke
      * @param array $params The parameters
-     * @return Tivoka\Client\Request
+     * @return Client\Request
      */
     public static function createRequest($method, $params=null) {
         return new Client\Request($method, $params);
@@ -68,6 +70,8 @@ abstract class Client
      * Creates a notification
      * @param string $method The method to invoke
      * @param array $params The parameters
+     *
+     * @return Client\Notification
      */
     public static function createNotification($method, $params=null) {
         return new Client\Notification($method, $params);
@@ -79,13 +83,15 @@ abstract class Client
     public static function notification($method, $params=null) {
         return self::createNotification($method, $params);
     }
-    
-    /**
-     * Creates a batch request
-     * @param mixed $request either an array of requests or a comma-seperated list of requests
-     * @throws Tivoka\Exception\Exception
-     * @return Tivoka\Client\BatchRequest
-     */
+
+	/**
+	 * Creates a batch request
+	 *
+	 * @param mixed $request either an array of requests or a comma-seperated list of requests
+	 *
+	 * @throws Exception\Exception
+	 * @return Client\BatchRequest
+	 */
     public static function createBatch($request) {
         if(func_num_args() > 1 ) $request = func_get_args();
         if(!is_array($request)) throw new Exception\Exception('Object of invalid data type passed to Tivoka::createBatch.');
