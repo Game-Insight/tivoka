@@ -133,27 +133,38 @@ class Request
         $this->responseHeaders = self::http_parse_headers($raw_headers);
     }
 
-    /**
-     * Interprets the parsed response
-     * @param array $json_struct
-     */
+	/**
+	 * Interprets the parsed response
+	 *
+	 * @param array $json_struct
+	 *
+	 * @throws Exception\SyntaxException
+	 */
     public function interpretResponse($json_struct) {
-        //server error?
-        if(($error = self::interpretError($this->spec, $json_struct, $this->id)) !== FALSE) {
-            $this->error        = $error['error']['code'];
-            $this->errorMessage = $error['error']['message'];
-            $this->errorData    = (isset($error['error']['data'])) ? $error['error']['data'] : null;
-            return;
-        }
-    
-        //valid result?
-        if(($result = self::interpretResult($this->spec, $json_struct, $this->id)) !== FALSE)
-        {
-            $this->result = $result['result'];
-            return;
-        }
-    
-        throw new Exception\SyntaxException('Invalid response structure');
+        // server error?
+		if (($error = self::interpretError($this->spec, $json_struct, $this->id)) !== FALSE) {
+			switch ($this->spec) {
+				case Tivoka::SPEC_2_0:
+					$this->error = $error['error']['code'];
+					$this->errorMessage = $error['error']['message'];
+					break;
+				case Tivoka::SPEC_1_0:
+					$this->error = null;
+					$this->errorMessage = $json_struct['error'];
+					break;
+			}
+
+			$this->errorData = (isset($error['error']['data'])) ? $error['error']['data'] : null;
+			return;
+		}
+
+		// valid result?
+		if (($result = self::interpretResult($this->spec, $json_struct, $this->id)) !== FALSE) {
+			$this->result = $result['result'];
+			return;
+		}
+
+		throw new Exception\SyntaxException('Invalid response structure');
     }
     
     /**
