@@ -283,7 +283,7 @@ class Server
     public function respond()
     {
         if(!is_array($this->response))//no array
-            exit;
+            return;
         
         $count = count($this->response);
         
@@ -294,7 +294,7 @@ class Server
             echo(json_encode($this->response));
     
         if($count < 1)//no response
-            exit;
+            return;
     }
     
     /**
