@@ -109,13 +109,13 @@ class Server
     /**
      * Starts processing of the HTTP input. This will stop further execution of the script.
      */
-    public function dispatch($requestBody) {
+    public function dispatch() {
         // disable error reporting?
         if($this->hide_errors) error_reporting(0);// prevents messing up the response
 
-	    $this->input = $requestBody;
+        $this->input = file_get_contents('php://input');
 
-	    $json_errors = array(
+        $json_errors = array(
             JSON_ERROR_NONE => '',
             JSON_ERROR_DEPTH => 'The maximum stack depth has been exceeded',
             JSON_ERROR_CTRL_CHAR => 'Control character error, possibly incorrectly encoded',
@@ -132,7 +132,7 @@ class Server
             $this->returnError(null,-32600);
             $this->respond();
 
-	        return;
+            return;
         }
 
         // decode request...
@@ -142,7 +142,7 @@ class Server
             $this->returnError(null,-32700, 'JSON parse error: '.$json_errors[json_last_error()] );
             $this->respond();
 
-	        return;
+            return;
         }
         
         // batch?
@@ -154,7 +154,7 @@ class Server
             }
             $this->respond();
 
-	        return;
+            return;
         }
         
         //process request
@@ -162,7 +162,7 @@ class Server
         $this->respond();
     }
 
-	/**
+    /**
      * Processes the passed request
      * @param array $request the parsed request
      */
