@@ -70,7 +70,7 @@ class Http extends AbstractConnection {
             $this->ch = curl_init($this->target);
             curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($this->ch, CURLOPT_POST, true);
-            curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, false);
             curl_setopt($this->ch, CURLOPT_COOKIEFILE, true);
         }
     }
