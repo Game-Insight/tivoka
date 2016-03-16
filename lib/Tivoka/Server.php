@@ -36,10 +36,10 @@ namespace Tivoka;
  */
 abstract class Server
 {
-    
     /**
      * Creates a server instance
-     * @param object $host An object whose methods will be provided for invokation
+     *
+     * @param object $host An object whose methods will be provided for invocation
      *
      * @return Server\Server
      */
