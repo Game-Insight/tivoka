@@ -41,10 +41,13 @@ abstract class Tivoka
     
     /**
      * Evaluates and returns the passed JSON-RPC spec version
-     * @private
+     *
      * @param string $version spec version as a string (using semver notation)
+     *
+     * @return int
+     * @throws Exception\SpecException
      */
-    static function validateSpecVersion($version)
+    public static function validateSpecVersion($version)
     {
         switch($version) {
             case '1.0':
@@ -53,7 +56,7 @@ abstract class Tivoka
             case '2.0':
                 return Tivoka::SPEC_2_0;
             default:
-                throw new Exception\SpecException('Unsupported spec version: '+$version);
+                throw new Exception\SpecException('Unsupported spec version: ' . $version);
         }
     }
 }

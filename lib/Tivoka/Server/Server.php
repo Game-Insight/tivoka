@@ -29,6 +29,7 @@
  */
 
 namespace Tivoka\Server;
+
 use Tivoka\Exception;
 use Tivoka\Tivoka;
 
@@ -43,7 +44,7 @@ class Server
     * @see Tivoka\Server\Server::__construct()
     * @access private
     */
-    public $host;
+    private $host;
     
     /**
      * @var array The parsed json input as an associative array
@@ -62,18 +63,20 @@ class Server
      * @var int
      * @access private
      */
-    public $spec = Tivoka::SPEC_2_0;
+    private $spec = Tivoka::SPEC_2_0;
     
     /**
      * This is modified by Server::hideErrors()
      * @var bool
      * @access private
      */
-    public $hide_errors = false;
+    private $hide_errors = false;
     
     /**
-     * Constructss a Server object
+     * Construct a Server object
      * @param object $host An object whose methods will be provided for invokation
+     *
+     * @throws Exception\Exception
      */
     public function __construct($host) {
         if(is_array($host)) {
@@ -88,10 +91,13 @@ class Server
         
         $this->host = $host;
     }
-    
+
     /**
      * Sets the spec version to use for this server
      * @param string $spec The spec version (e.g.: "2.0")
+     *
+     * @return $this
+     * @throws Exception\SpecException
      */
     public function useSpec($spec) {
         $this->spec = Tivoka::validateSpecVersion($spec);
@@ -105,9 +111,11 @@ class Server
         $this->hide_errors = true;
         return $this;
     }
-    
+
     /**
      * Starts processing of the HTTP input. This will stop further execution of the script.
+     *
+     * @param string $requestBody
      */
     public function dispatch($requestBody) {
         // disable error reporting?
@@ -170,7 +178,7 @@ class Server
         $server = $this;
         $params = (isset($request['params']) === FALSE) ? array() : $request['params'];
         $id = (isset($request['id']) === FALSE) ? null : $request['id'];
-        $isNotific = $this::interpretRequest($this->spec, $request) === FALSE;
+        $isNotific = self::interpretRequest($this->spec, $request) === FALSE;
         
         // utility closures
         $error = function($code, $msg='', $data=null) use ($server, $id, $isNotific) {
@@ -213,7 +221,7 @@ class Server
      * @param mixed $result The computed result
      * @access private
      */
-    public function returnResult($id, $result)
+    private function returnResult($id, $result)
     {
         switch($this->spec) {
         case Tivoka::SPEC_2_0:
@@ -241,7 +249,7 @@ class Server
      * @param mixed $data Additional data
      * @access private
      */
-    public function returnError($id, $code, $message='', $data=null)
+    private function returnError($id, $code, $message='', $data=null)
     {
         $msg = array(
             -32700 => 'Parse error',
@@ -280,7 +288,7 @@ class Server
      * Outputs the processed response
      * @access private
      */
-    public function respond()
+    private function respond()
     {
         if(!is_array($this->response))//no array
             return;
@@ -296,13 +304,15 @@ class Server
         if($count < 1)//no response
             return;
     }
-    
+
     /**
-    * Validates and sanitizes a normal request
-    * @param array $assoc The json-parsed JSON-RPC request
-    * @static
-    * @return array Returns the sanitized request and if it was invalid, a boolean FALSE is returned
-    */
+     * Validates and sanitizes a normal request
+     *
+     * @param int $spec
+     * @param array $assoc The json-parsed JSON-RPC request
+     * @static
+     * @return array Returns the sanitized request and if it was invalid, a boolean FALSE is returned
+     */
     public static function interpretRequest($spec, array $assoc)
     {
         switch($spec) {
@@ -335,6 +345,8 @@ class Server
     
     /**
      * Validates and sanitizes a notification
+     *
+     * @param int $spec
      * @param array $assoc The json-parsed JSON-RPC request
      * @static
      * @return array Returns the sanitized request and if it was invalid, a boolean FALSE is returned

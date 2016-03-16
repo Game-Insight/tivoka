@@ -29,6 +29,7 @@
  */
 
 namespace Tivoka\Server;
+
 use Tivoka\Exception;
 
 /**
@@ -60,7 +61,7 @@ class MethodWrapper
     /**
      * Returns TRUE if the method with the given name is registered and a valid callback
      *
-     * @param callback $method The name of the method to check
+     * @param string $method The name of the method to check
      * @returns bool
      */
     public function exist($method)
@@ -71,8 +72,12 @@ class MethodWrapper
 
     /**
      * Invokes the requested method
+     *
+     * @param string $method
+     * @param array $args
+     * @return mixed|void
      */
-    public function __call($method,$args)
+    public function __call($method, $args)
     {
         if(!$this->exist($method)){
             $args[0]->error(-32601); return;
